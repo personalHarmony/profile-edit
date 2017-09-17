@@ -1,0 +1,189 @@
+<link rel="import" href="../polymer/polymer-element.html">
+<link rel="import" href="../skin-styles/classes/buttons.html">
+<link rel="import" href="../skin-styles/classes/typography.html">
+<link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../image-uploader/image-uploader.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../polymerfire/firebase-auth.html">
+
+<dom-module id="profile-edit">
+  <template>
+    <style is="custom-style" include="skin-buttons skin-typography">
+      :host {
+        display: block;
+        @apply --layout-flex-auto;
+        @apply --layout-vertical;
+        box-sizing: border-box;
+        position: relative;
+      }
+
+      #picture-container {
+        max-width: 300px;
+        margin: 0 auto 2rem auto;
+        box-sizing: border-box;
+      }
+
+      image-uploader {
+        --paper-fab-background: white;
+        --paper-fab-iron-icon: {
+          color: var(--paper-indigo-a700);
+        };
+      }
+
+      .displayName {
+        text-transform: capitalize;
+        min-height: 35px;
+        line-height: 35px;
+        margin-bottom: 0.5rem;
+      }
+
+      .profileSummary {
+        min-height: 25px;
+        line-height: 25px;
+      }
+
+      header {
+        @apply --layout-flex-auto;
+        @apply --layout-vertical;
+        @apply --layout-center-justified;
+        background-color: var(--paper-indigo-a200);
+        padding: 1rem;
+        box-sizing: border-box;
+      }
+
+      #text {
+        text-align: center;
+      }
+
+      #body {
+        margin: 0 auto 1rem auto;
+        padding: 0 1rem;
+        @apply --layout-flex-none;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      paper-input {
+        margin-bottom: 0.5rem;
+      }
+    </style>
+    <firebase-auth
+      signed-in="{{signedIn}}"
+      user="{{user}}">
+    </firebase-auth>
+    <header>
+      <div id="top-container">
+        <div id="picture-container">
+          <image-uploader circle image-preview$="[[user.photoURL]]"></image-uploader>
+        </div>
+        <div id="text">
+          <h2 class="displayName paper-font-headline dark">[[displayName]]</h2>
+          <p class="profileSummary paper-font-subhead dark">[[profileSummary]]</p>
+        </div>
+      </div>
+    </header>
+    <div id="body">
+      <paper-input placeholder="Your name"
+                   value="{{displayName}}"
+                   maxlength="20"
+                   char-counter
+      ></paper-input>
+      <paper-input placeholder="Tell me something about yourself"
+                   value="{{profileSummary}}"
+                   maxlength="100"
+                   char-counter
+      ></paper-input>
+    </div>
+  </template>
+
+  <script>
+    /**
+     * `profile-edit`
+     *
+     *
+     * @customElement
+     * @polymer
+     * @demo demo/index.html
+     */
+    class ProfileEdit extends Polymer.Element {
+      /**
+       * @return {string}
+       */
+      static get is() {
+        return 'profile-edit';
+      }
+
+      /**
+       * @return {object}
+       */
+      static get properties() {
+        return {
+          signedIn: {
+            type: Boolean,
+            value: false,
+          },
+          user: {
+            type: Object,
+            value: {},
+            observer: '_userObserver',
+          },
+          displayName: {
+            type: String,
+            value: null,
+          },
+          profileSummary: {
+            type: String,
+            value: null,
+          },
+        };
+      }
+
+      /**
+       * Update
+       *
+       * @private
+       */
+      update() {
+        if (this.user.displayName === this.displayName) return;
+        const user = firebase.auth().currentUser;
+        user.updateProfile({
+          displayName: this._toTitleCase(this.displayName),
+        }).then(() => {
+          // Update successful.
+          console.log('Update successful.');
+        }).catch((error) => {
+          // An error happened.
+          console.error(error);
+        });
+      }
+
+      /**
+       * Title case text
+       *
+       * @param {string} baseText
+       * @return {*|void|string|XML}
+       * @private
+       */
+      _toTitleCase(baseText) {
+        if (!baseText) return null;
+        return baseText.replace(/\w\S*/g, (txt) => {
+          return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+        });
+      }
+
+      /**
+       * User observer
+       *
+       * @param {object} user
+       * @private
+       */
+      _userObserver(user) {
+        if (!user) return;
+        this.displayName = user.displayName ? user.displayName : null;
+      }
+    }
+
+    window.customElements.define(ProfileEdit.is, ProfileEdit);
+
+  </script>
+</dom-module>

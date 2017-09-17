@@ -1,0 +1,21 @@
+{
+  "name": "profile-edit",
+  "main": "profile-edit.html",
+  "dependencies": {
+    "polymer": "Polymer/polymer#^2.0.0",
+    "polymerfire": "firebase/polymerfire#^2.0.0",
+    "image-uploader": "git@github.com:personalHarmony/image-uploader.git",
+    "skeleton-auth": "FabricElements/skeleton-auth",
+    "skin-styles": "FabricElements/skin-styles",
+    "paper-input": "PolymerElements/paper-input#^2.0.2",
+    "iron-flex-layout": "PolymerElements/iron-flex-layout#^2.0.0"
+  },
+  "devDependencies": {
+    "iron-demo-helpers": "PolymerElements/iron-demo-helpers#^2.0.0",
+    "web-component-tester": "Polymer/web-component-tester#^6.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
+  },
+  "resolutions": {
+    "polymer": "^2.0.0"
+  }
+}

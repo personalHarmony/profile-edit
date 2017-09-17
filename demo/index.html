@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>profile-edit demo</title>
+
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+
+  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
+  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
+  <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
+  <link rel="import" href="../../polymer/lib/elements/dom-if.html">
+  <link rel="import" href="../../polymerfire/polymerfire.html">
+  <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
+  <link rel="import" href="../../skeleton-auth/skeleton-auth.html">
+  <link rel="import" href="../profile-edit.html">
+
+  <custom-style>
+    <style is="custom-style" include="demo-pages-shared-styles">
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+      }
+
+      body {
+        @apply --layout-vertical;
+      }
+    </style>
+  </custom-style>
+</head>
+
+<body>
+<dom-bind>
+  <template>
+    <firebase-app auth-domain="ph-staging-c3f40.firebaseapp.com"
+                  database-url="https://ph-staging-c3f40.firebaseio.com"
+                  api-key="AIzaSyAWZ2ax6AK7BRty2CVHTME6oNShBJaDkPI"
+                  storage-bucket="ph-staging-c3f40.appspot.com">
+    </firebase-app>
+    <firebase-auth signed-in="{{signedIn}}" user="{{user}}"></firebase-auth>
+    <dom-if if="[[!signedIn]]">
+      <template>
+        <skeleton-auth google></skeleton-auth>
+      </template>
+    </dom-if>
+    <dom-if if="[[signedIn]]">
+      <template>
+        <profile-edit></profile-edit>
+      </template>
+    </dom-if>
+  </template>
+</dom-bind>
+</body>
+
+</html>
