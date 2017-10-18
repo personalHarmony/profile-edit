@@ -3,7 +3,7 @@
   "main": "profile-edit.html",
   "dependencies": {
     "polymer": "Polymer/polymer#^2.0.0",
-    "polymerfire": "firebase/polymerfire#^2.0.0",
+    "polymerfire": "firebase/polymerfire#master",
     "image-uploader": "git@github.com:personalHarmony/image-uploader.git",
     "skeleton-auth": "FabricElements/skeleton-auth",
     "skin-styles": "FabricElements/skin-styles",
@@ -16,6 +16,7 @@
     "webcomponentsjs": "webcomponents/webcomponentsjs#^1.0.0"
   },
   "resolutions": {
-    "polymer": "^2.0.0"
+    "polymer": "^2.0.0",
+    "polymerfire": "master"
   }
 }
