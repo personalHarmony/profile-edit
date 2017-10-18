@@ -113,6 +113,7 @@
       static get is() {
         return 'profile-edit';
       }
+
       /**
        * @return {object}
        */
@@ -128,10 +129,11 @@
             observer: '_userObserver',
           },
           profile: {
-            type: Object
-          }
+            type: Object,
+          },
         };
       }
+
       /**
        * Update
        *
@@ -142,8 +144,8 @@
         const db = firebase.firestore();
         const ref = db.collection('users').doc(this.user.uid);
         ref.update({
-          name: this._toTitleCase(this.profile.name),
-          "bio.original": this.profile.bio.original
+          'name': this._toTitleCase(this.profile.name),
+          'bio.original': this.profile.bio.original,
         }).then(() => {
           this.dispatchEvent(new CustomEvent('profile-updated', {
             bubbles: true,
@@ -154,6 +156,7 @@
           console.error('Error updating document: ', error);
         });
       }
+
       /**
        * Title case text
        *
@@ -167,6 +170,7 @@
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
       }
+
       /**
        * User observer
        *
@@ -182,6 +186,7 @@
         });
       }
     }
+
     window.customElements.define(ProfileEdit.is, ProfileEdit);
 
   </script>

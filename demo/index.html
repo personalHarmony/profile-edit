@@ -31,6 +31,7 @@
       body {
         @apply --layout-vertical;
       }
+
     </style>
   </custom-style>
 </head>
@@ -59,10 +60,17 @@
   </template>
 </dom-bind>
 <script>
-  function saveProfile(){
+  /* eslint-disable no-unused-vars */
+
+  /**
+   * saveProfile
+   *
+   */
+  function saveProfile() {
     const element = this.document.querySelector('profile-edit');
     element.update();
   }
+
 </script>
 </body>
 
