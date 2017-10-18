@@ -16,6 +16,7 @@
   <link rel="import" href="../../polymerfire/polymerfire.html">
   <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
   <link rel="import" href="../../skeleton-auth/skeleton-auth.html">
+  <link rel="import" href="../../paper-button/paper-button.html">
   <link rel="import" href="../profile-edit.html">
 
   <custom-style>
@@ -30,6 +31,7 @@
       body {
         @apply --layout-vertical;
       }
+
     </style>
   </custom-style>
 </head>
@@ -40,7 +42,8 @@
     <firebase-app auth-domain="ph-staging-c3f40.firebaseapp.com"
                   database-url="https://ph-staging-c3f40.firebaseio.com"
                   api-key="AIzaSyAWZ2ax6AK7BRty2CVHTME6oNShBJaDkPI"
-                  storage-bucket="ph-staging-c3f40.appspot.com">
+                  storage-bucket="ph-staging-c3f40.appspot.com"
+                  project-id="ph-staging-c3f40">
     </firebase-app>
     <firebase-auth signed-in="{{signedIn}}" user="{{user}}"></firebase-auth>
     <dom-if if="[[!signedIn]]">
@@ -51,10 +54,24 @@
     <dom-if if="[[signedIn]]">
       <template>
         <profile-edit></profile-edit>
+        <paper-button onclick="saveProfile()">Save</paper-button>
       </template>
     </dom-if>
   </template>
 </dom-bind>
+<script>
+  /* eslint-disable no-unused-vars */
+
+  /**
+   * saveProfile
+   *
+   */
+  function saveProfile() {
+    const element = this.document.querySelector('profile-edit');
+    element.update();
+  }
+
+</script>
 </body>
 
 </html>
