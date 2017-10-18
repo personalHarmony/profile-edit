@@ -5,6 +5,7 @@
 <link rel="import" href="../image-uploader/image-uploader.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../polymerfire/firebase-auth.html">
+<link rel="import" href="../polymerfire/firebase-firestore-script.html">
 
 <dom-module id="profile-edit">
   <template>
@@ -77,19 +78,19 @@
           <image-uploader circle image-preview$="[[user.photoURL]]"></image-uploader>
         </div>
         <div id="text">
-          <h2 class="displayName paper-font-headline dark">[[displayName]]</h2>
-          <p class="profileSummary paper-font-subhead dark">[[profileSummary]]</p>
+          <h2 class="displayName paper-font-headline dark">[[profile.name]]</h2>
+          <p class="profileSummary paper-font-subhead dark">[[profile.bio.original]]</p>
         </div>
       </div>
     </header>
     <div id="body">
       <paper-input placeholder="Your name"
-                   value="{{displayName}}"
-                   maxlength="20"
+                   value="{{profile.name}}"
+                   maxlength="50"
                    char-counter
       ></paper-input>
       <paper-input placeholder="Tell us about yourself & why you want to play more"
-                   value="{{profileSummary}}"
+                   value="{{profile.bio.original}}"
                    maxlength="100"
                    char-counter
       ></paper-input>
@@ -112,7 +113,6 @@
       static get is() {
         return 'profile-edit';
       }
-
       /**
        * @return {object}
        */
@@ -127,36 +127,33 @@
             value: {},
             observer: '_userObserver',
           },
-          displayName: {
-            type: String,
-            value: null,
-          },
-          profileSummary: {
-            type: String,
-            value: null,
-          },
+          profile: {
+            type: Object
+          }
         };
       }
-
       /**
        * Update
        *
        * @private
        */
       update() {
-        if (this.user.displayName === this.displayName) return;
-        const user = firebase.auth().currentUser;
-        user.updateProfile({
-          displayName: this._toTitleCase(this.displayName),
+        if (!this.profile.name) return;
+        const db = firebase.firestore();
+        const ref = db.collection('users').doc(this.user.uid);
+        ref.update({
+          name: this._toTitleCase(this.profile.name),
+          "bio.original": this.profile.bio.original
         }).then(() => {
-          // Update successful.
-          console.log('Update successful.');
+          this.dispatchEvent(new CustomEvent('profile-updated', {
+            bubbles: true,
+            composed: true,
+          }));
         }).catch((error) => {
-          // An error happened.
-          console.error(error);
+          // The document probably doesn't exist.
+          console.error('Error updating document: ', error);
         });
       }
-
       /**
        * Title case text
        *
@@ -170,7 +167,6 @@
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
       }
-
       /**
        * User observer
        *
@@ -179,10 +175,13 @@
        */
       _userObserver(user) {
         if (!user) return;
-        this.displayName = user.displayName ? user.displayName : null;
+        let db = firebase.firestore();
+        db.collection('users').doc(user.uid).onSnapshot((doc) => {
+          if (!doc.data()) return;
+          this.profile = doc.data();
+        });
       }
     }
-
     window.customElements.define(ProfileEdit.is, ProfileEdit);
 
   </script>
