@@ -41,6 +41,7 @@
       .profileSummary {
         min-height: 25px;
         line-height: 25px;
+        font-weight: 500;
       }
 
       header {
@@ -54,6 +55,8 @@
 
       #text {
         text-align: center;
+        max-width: 700px;
+        margin: 0 auto;
       }
 
       #body {
@@ -62,6 +65,7 @@
         @apply --layout-flex-none;
         width: 100%;
         box-sizing: border-box;
+        max-width: 700px;
       }
 
       paper-input {
@@ -91,7 +95,7 @@
       ></paper-input>
       <paper-input placeholder="Tell us about yourself & why you want to play more"
                    value="{{profile.bio.original}}"
-                   maxlength="100"
+                   maxlength="150"
                    char-counter
       ></paper-input>
     </div>
