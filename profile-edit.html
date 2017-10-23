@@ -2,7 +2,7 @@
 <link rel="import" href="../skin-styles/classes/buttons.html">
 <link rel="import" href="../skin-styles/classes/typography.html">
 <link rel="import" href="../iron-flex-layout/iron-flex-layout.html">
-<link rel="import" href="../image-uploader/image-uploader.html">
+<link rel="import" href="../skeleton-image-uploader/skeleton-image-uploader.html">
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../polymerfire/firebase-auth.html">
 <link rel="import" href="../polymerfire/firebase-firestore-script.html">
@@ -24,7 +24,7 @@
         box-sizing: border-box;
       }
 
-      image-uploader {
+      skeleton-image-uploader {
         --paper-fab-background: white;
         --paper-fab-iron-icon: {
           color: var(--paper-indigo-a700);
@@ -79,7 +79,14 @@
     <header>
       <div id="top-container">
         <div id="picture-container">
-          <image-uploader circle image-preview$="[[user.photoURL]]"></image-uploader>
+          <skeleton-image-uploader circle
+                                   vision="AIzaSyDqtR51PSS-Pr9FSUHAKQGkNiy_cqPA9W4"
+                                   src$="[[user.photoURL]]"
+                                   placeholder="http://p.imgix.net/default.jpg?fit=cut&w=500&h=500"
+                                   content-type="image/jpeg"
+                                   metadata$='{"customMetadata":{"type":"avatar","id":1,"user":"[[user.uid]]"}}'
+                                   path$="images/users/[[user.uid]]/avatar/1.jpg"
+          ></skeleton-image-uploader>
         </div>
         <div id="text">
           <h2 class="displayName paper-font-headline dark">[[profile.name]]</h2>
