@@ -162,6 +162,7 @@
             bubbles: true,
             composed: true,
           }));
+          console.log('User updated');
         }).catch((error) => {
           // The document probably doesn't exist.
           console.error('Error updating document: ', error);
@@ -190,6 +191,7 @@
        */
       _userObserver(user) {
         if (!user) return;
+        console.log(user);
         let db = firebase.firestore();
         db.collection('users').doc(user.uid).onSnapshot((doc) => {
           if (!doc.data()) return;
