@@ -146,7 +146,13 @@
               name: null,
               bio: {},
             },
+          },
+          ok: {
+            type: Boolean,
+            value: false,
             reflectToAttribute: true,
+            notify: true,
+            computed: '_computeOk(profile, profile.*)',
           },
         };
       }
@@ -197,12 +203,22 @@
        */
       _userObserver(user) {
         if (!user) return;
-        console.log(user);
         let db = firebase.firestore();
         db.collection('users').doc(user.uid).onSnapshot((doc) => {
           if (!doc.data()) return;
           this.profile = doc.data();
         });
+      }
+
+      /**
+       * Compute ready to save
+       *
+       * @param {object} profile
+       * @return {boolean}
+       * @private
+       */
+      _computeOk(profile) {
+        return !(!profile || profile.name <= 3 || profile.bio.original <= 3);
       }
     }
 

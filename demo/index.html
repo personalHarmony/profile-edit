@@ -32,7 +32,7 @@
         @apply --layout-vertical;
       }
 
-      paper-button {
+      paper-button:not([disabled]) {
         background-color: var(--paper-indigo-a400);
         color: white;
       }
@@ -57,8 +57,12 @@
     </dom-if>
     <dom-if if="[[signedIn]]">
       <template>
-        <profile-edit profile="{{profile}}"></profile-edit>
-        <paper-button onclick="saveProfile()" disabled$="{{!profile.name}}">Save</paper-button>
+        <dom-bind>
+          <template>
+            <profile-edit ok="{{ok}}"></profile-edit>
+            <paper-button onclick="saveProfile();" disabled$="[[!ok]]">Save</paper-button>
+          </template>
+        </dom-bind>
       </template>
     </dom-if>
   </template>
