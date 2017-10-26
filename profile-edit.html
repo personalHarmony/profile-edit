@@ -168,8 +168,19 @@
         const ref = db.collection('users').doc(this.user.uid);
         ref.set({
           'name': this._toTitleCase(this.profile.name),
-          'bio.original': this.profile.bio.original,
+          'bio': {
+            'original': this.profile.bio.original,
+          },
         }, {merge: true}).then(() => {
+          this.dispatchEvent(new CustomEvent('alert', {
+            detail: {
+              text: 'Your profile has been updated',
+              time: 2000,
+              type: 'basic',
+            },
+            bubbles: true,
+            composed: true,
+          }));
           this.dispatchEvent(new CustomEvent('profile-updated', {
             bubbles: true,
             composed: true,
@@ -178,6 +189,15 @@
         }).catch((error) => {
           // The document probably doesn't exist.
           console.error('Error updating document: ', error);
+          this.dispatchEvent(new CustomEvent('alert', {
+            detail: {
+              text: 'There was a problem updating your profile',
+              time: 3000,
+              type: 'error',
+            },
+            bubbles: true,
+            composed: true,
+          }));
         });
       }
 
