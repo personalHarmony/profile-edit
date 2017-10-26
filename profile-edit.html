@@ -142,6 +142,11 @@
           },
           profile: {
             type: Object,
+            value: {
+              name: null,
+              bio: {},
+            },
+            reflectToAttribute: true,
           },
         };
       }
@@ -155,10 +160,10 @@
         if (!this.profile.name) return;
         const db = firebase.firestore();
         const ref = db.collection('users').doc(this.user.uid);
-        ref.update({
+        ref.set({
           'name': this._toTitleCase(this.profile.name),
           'bio.original': this.profile.bio.original,
-        }).then(() => {
+        }, {merge: true}).then(() => {
           this.dispatchEvent(new CustomEvent('profile-updated', {
             bubbles: true,
             composed: true,

@@ -31,6 +31,11 @@
       body {
         @apply --layout-vertical;
       }
+
+      paper-button {
+        background-color: var(--paper-indigo-a400);
+        color: white;
+      }
     </style>
   </custom-style>
 </head>
@@ -52,8 +57,8 @@
     </dom-if>
     <dom-if if="[[signedIn]]">
       <template>
-        <profile-edit></profile-edit>
-        <paper-button onclick="saveProfile()">Save</paper-button>
+        <profile-edit profile="{{profile}}"></profile-edit>
+        <paper-button onclick="saveProfile()" disabled$="{{!profile.name}}">Save</paper-button>
       </template>
     </dom-if>
   </template>
