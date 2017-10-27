@@ -168,10 +168,11 @@
         if (!this.profile.name) return;
         const db = firebase.firestore();
         const ref = db.collection('users').doc(this.user.uid);
+        const original = this.profile.bio ? this.profile.bio.original : '';
         ref.set({
           'name': this._toTitleCase(this.profile.name),
           'bio': {
-            'original': this.profile.bio.original,
+            'original': original,
           },
         }, {merge: true}).then(() => {
           this.dispatchEvent(new CustomEvent('alert', {
