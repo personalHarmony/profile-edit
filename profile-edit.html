@@ -144,7 +144,9 @@
             type: Object,
             value: {
               name: null,
-              bio: {},
+              bio: {
+                original: null,
+              },
             },
           },
           ok: {
@@ -238,7 +240,8 @@
        * @private
        */
       _computeOk(profile) {
-        return !(!profile || profile.name <= 3 || profile.bio.original <= 3);
+        return !(!profile || !profile.name || profile.name <= 3 ||
+          !profile.bio || !profile.bio.original || profile.bio.original <= 3);
       }
     }
 
