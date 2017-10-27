@@ -55,16 +55,8 @@
         <skeleton-auth google></skeleton-auth>
       </template>
     </dom-if>
-    <dom-if if="[[signedIn]]">
-      <template>
-        <dom-bind>
-          <template>
-            <profile-edit ok="{{ok}}"></profile-edit>
-            <paper-button onclick="saveProfile();" disabled$="[[!ok]]">Save</paper-button>
-          </template>
-        </dom-bind>
-      </template>
-    </dom-if>
+    <profile-edit ok="{{ok}}"></profile-edit>
+    <paper-button onclick="saveProfile();" disabled$="[[!ok]]">Save</paper-button>
   </template>
 </dom-bind>
 <script>
