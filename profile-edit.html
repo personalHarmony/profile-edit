@@ -125,6 +125,7 @@
       static get is() {
         return 'profile-edit';
       }
+
       /**
        * @return {object}
        */
@@ -157,33 +158,16 @@
           },
         };
       }
+
+      /**
+       * Ready
+       */
       ready() {
         super.ready();
-        window.addEventListener('completed', (downloadURL) => this._updatePhotoAuth(downloadURL));
+        window.addEventListener('completed',
+          (downloadURL) => this._updatePhotoAuth(downloadURL));
       }
-      _updatePhotoAuth(downloadURL) {
-        if (!downloadURL.detail) return;
-        let user = firebase.auth().currentUser;
-        user.updateProfile({
-          photoURL: downloadURL.detail
-        }).then(function() {
-          // Update successful.
-          console.log('User photoURL updated');
-          console.log(user);
-        }).catch(function(error) {
-          // An error happened.
-          console.error('Error updating Auth: ', error);
-          this.dispatchEvent(new CustomEvent('alert', {
-            detail: {
-              text: 'There was a problem updating your photoURL on Auth',
-              time: 3000,
-              type: 'error',
-            },
-            bubbles: true,
-            composed: true,
-          }));
-        });
-      }
+
       /**
        * Update
        *
@@ -200,7 +184,7 @@
             'original': original,
           },
         }, {
-          merge: true
+          merge: true,
         }).then(() => {
           this.dispatchEvent(new CustomEvent('alert', {
             detail: {
@@ -218,11 +202,9 @@
           let user = firebase.auth().currentUser;
           user.updateProfile({
             displayName: this._toTitleCase(this.profile.name),
-            // photoURL: "https://example.com/jane-q-user/profile.jpg"
           }).then(function() {
             // Update successful.
             console.log('User updated');
-            console.log(user);
           }).catch(function(error) {
             // An error happened.
             console.error('Error updating Auth: ', error);
@@ -250,6 +232,7 @@
           }));
         });
       }
+
       /**
        * Title case text
        *
@@ -263,6 +246,7 @@
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
       }
+
       /**
        * User observer
        *
@@ -277,6 +261,7 @@
           this.profile = doc.data();
         });
       }
+
       /**
        * Compute ready to save
        *
@@ -287,7 +272,36 @@
       _computeOk(profile) {
         return !!profile.name;
       }
+
+      /**
+       * Update photo on Auth
+       * @param {string} downloadURL
+       * @private
+       */
+      _updatePhotoAuth(downloadURL) {
+        if (!downloadURL.detail) return;
+        let user = firebase.auth().currentUser;
+        user.updateProfile({
+          photoURL: downloadURL.detail,
+        }).then(function() {
+          // Update successful.
+          console.log('User photoURL updated');
+        }).catch(function(error) {
+          // An error happened.
+          console.error('Error updating Auth: ', error);
+          this.dispatchEvent(new CustomEvent('alert', {
+            detail: {
+              text: 'There was a problem updating your photoURL on Auth',
+              time: 3000,
+              type: 'error',
+            },
+            bubbles: true,
+            composed: true,
+          }));
+        });
+      }
     }
+
     window.customElements.define(ProfileEdit.is, ProfileEdit);
 
   </script>
