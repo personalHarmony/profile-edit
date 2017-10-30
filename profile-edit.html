@@ -157,6 +157,33 @@
           },
         };
       }
+      ready() {
+        super.ready();
+        window.addEventListener('completed', (downloadURL) => this._updatePhotoAuth(downloadURL));
+      }
+      _updatePhotoAuth(downloadURL) {
+        if (!downloadURL.detail) return;
+        let user = firebase.auth().currentUser;
+        user.updateProfile({
+          photoURL: downloadURL.detail
+        }).then(function() {
+          // Update successful.
+          console.log('User photoURL updated');
+          console.log(user);
+        }).catch(function(error) {
+          // An error happened.
+          console.error('Error updating Auth: ', error);
+          this.dispatchEvent(new CustomEvent('alert', {
+            detail: {
+              text: 'There was a problem updating your photoURL on Auth',
+              time: 3000,
+              type: 'error',
+            },
+            bubbles: true,
+            composed: true,
+          }));
+        });
+      }
       /**
        * Update
        *
@@ -198,6 +225,16 @@
             console.log(user);
           }).catch(function(error) {
             // An error happened.
+            console.error('Error updating Auth: ', error);
+            this.dispatchEvent(new CustomEvent('alert', {
+              detail: {
+                text: 'There was a problem updating your profile on Auth',
+                time: 3000,
+                type: 'error',
+              },
+              bubbles: true,
+              composed: true,
+            }));
           });
         }).catch((error) => {
           // The document probably doesn't exist.
