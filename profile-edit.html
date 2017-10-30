@@ -160,6 +160,15 @@
       }
 
       /**
+       * Ready
+       */
+      ready() {
+        super.ready();
+        window.addEventListener('completed',
+          (downloadURL) => this._updatePhotoAuth(downloadURL));
+      }
+
+      /**
        * Update
        *
        * @private
@@ -174,7 +183,9 @@
           'bio': {
             'original': original,
           },
-        }, {merge: true}).then(() => {
+        }, {
+          merge: true,
+        }).then(() => {
           this.dispatchEvent(new CustomEvent('alert', {
             detail: {
               text: 'Your profile has been updated',
@@ -188,7 +199,25 @@
             bubbles: true,
             composed: true,
           }));
-          console.log('User updated');
+          let user = firebase.auth().currentUser;
+          user.updateProfile({
+            displayName: this._toTitleCase(this.profile.name),
+          }).then(function() {
+            // Update successful.
+            console.log('User updated');
+          }).catch(function(error) {
+            // An error happened.
+            console.error('Error updating Auth: ', error);
+            this.dispatchEvent(new CustomEvent('alert', {
+              detail: {
+                text: 'There was a problem updating your profile on Auth',
+                time: 3000,
+                type: 'error',
+              },
+              bubbles: true,
+              composed: true,
+            }));
+          });
         }).catch((error) => {
           // The document probably doesn't exist.
           console.error('Error updating document: ', error);
@@ -242,6 +271,34 @@
        */
       _computeOk(profile) {
         return !!profile.name;
+      }
+
+      /**
+       * Update photo on Auth
+       * @param {string} downloadURL
+       * @private
+       */
+      _updatePhotoAuth(downloadURL) {
+        if (!downloadURL.detail) return;
+        let user = firebase.auth().currentUser;
+        user.updateProfile({
+          photoURL: downloadURL.detail,
+        }).then(function() {
+          // Update successful.
+          console.log('User photoURL updated');
+        }).catch(function(error) {
+          // An error happened.
+          console.error('Error updating Auth: ', error);
+          this.dispatchEvent(new CustomEvent('alert', {
+            detail: {
+              text: 'There was a problem updating your photoURL on Auth',
+              time: 3000,
+              type: 'error',
+            },
+            bubbles: true,
+            composed: true,
+          }));
+        });
       }
     }
 
