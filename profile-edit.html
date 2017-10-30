@@ -125,7 +125,6 @@
       static get is() {
         return 'profile-edit';
       }
-
       /**
        * @return {object}
        */
@@ -158,7 +157,6 @@
           },
         };
       }
-
       /**
        * Update
        *
@@ -174,7 +172,9 @@
           'bio': {
             'original': original,
           },
-        }, {merge: true}).then(() => {
+        }, {
+          merge: true
+        }).then(() => {
           this.dispatchEvent(new CustomEvent('alert', {
             detail: {
               text: 'Your profile has been updated',
@@ -188,7 +188,17 @@
             bubbles: true,
             composed: true,
           }));
-          console.log('User updated');
+          let user = firebase.auth().currentUser;
+          user.updateProfile({
+            displayName: this._toTitleCase(this.profile.name),
+            // photoURL: "https://example.com/jane-q-user/profile.jpg"
+          }).then(function() {
+            // Update successful.
+            console.log('User updated');
+            console.log(user);
+          }).catch(function(error) {
+            // An error happened.
+          });
         }).catch((error) => {
           // The document probably doesn't exist.
           console.error('Error updating document: ', error);
@@ -203,7 +213,6 @@
           }));
         });
       }
-
       /**
        * Title case text
        *
@@ -217,7 +226,6 @@
           return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
         });
       }
-
       /**
        * User observer
        *
@@ -232,7 +240,6 @@
           this.profile = doc.data();
         });
       }
-
       /**
        * Compute ready to save
        *
@@ -244,7 +251,6 @@
         return !!profile.name;
       }
     }
-
     window.customElements.define(ProfileEdit.is, ProfileEdit);
 
   </script>
