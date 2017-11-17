@@ -6,6 +6,8 @@
 <link rel="import" href="../paper-input/paper-input.html">
 <link rel="import" href="../polymerfire/firebase-auth.html">
 <link rel="import" href="../polymerfire/firebase-firestore-script.html">
+<link rel="import" href="../paper-fab/paper-fab.html">
+<link rel="import" href="../iron-icons/image-icons.html">
 
 <dom-module id="profile-edit">
   <template>
@@ -22,9 +24,17 @@
         max-width: 300px;
         margin: 0 auto 2rem auto;
         box-sizing: border-box;
+        position: relative;
       }
 
-      skeleton-image-uploader {
+      #picture-container paper-fab {
+        position: absolute;
+        bottom: 1rem;
+        right: 1rem;
+        z-index: 2;
+      }
+
+      #picture-container {
         --paper-fab-background: white;
         --paper-fab-iron-icon: {
           color: var(--paper-indigo-a700);
@@ -85,9 +95,12 @@
                                    src$="[[user.photoURL]]"
                                    placeholder="http://p.imgix.net/default.jpg?fit=cut&w=500&h=500"
                                    content-type="image/jpeg"
-                                   metadata$='{"customMetadata":{"type":"avatar","id":1,"user":"[[user.uid]]"}}'
+                                   metadata$="[[metadata]]"
                                    path$="images/users/[[user.uid]]/avatar/1.jpg"
           ></skeleton-image-uploader>
+          <paper-fab icon="image:photo-camera"
+                     on-tap="_capture"
+          ></paper-fab>
         </div>
         <div id="text">
           <h2 class="displayName paper-font-headline dark">[[profile.name]]</h2>
@@ -156,6 +169,10 @@
             notify: true,
             computed: '_computeOk(profile, profile.*)',
           },
+          metadata: {
+            type: Object,
+            value: {},
+          },
         };
       }
 
@@ -202,10 +219,10 @@
           let user = firebase.auth().currentUser;
           user.updateProfile({
             displayName: this._toTitleCase(this.profile.name),
-          }).then(function() {
+          }).then(function () {
             // Update successful.
             console.log('User updated');
-          }).catch(function(error) {
+          }).catch(function (error) {
             // An error happened.
             console.error('Error updating Auth: ', error);
             this.dispatchEvent(new CustomEvent('alert', {
@@ -260,6 +277,14 @@
           if (!doc.data()) return;
           this.profile = doc.data();
         });
+
+        this.metadata = {
+          customMetadata: {
+            type: 'avatar',
+            id: 1,
+            user: user.uid,
+          },
+        };
       }
 
       /**
@@ -283,10 +308,10 @@
         let user = firebase.auth().currentUser;
         user.updateProfile({
           photoURL: downloadURL.detail,
-        }).then(function() {
+        }).then(() => {
           // Update successful.
           console.log('User photoURL updated');
-        }).catch(function(error) {
+        }).catch((error) => {
           // An error happened.
           console.error('Error updating Auth: ', error);
           this.dispatchEvent(new CustomEvent('alert', {
@@ -299,6 +324,16 @@
             composed: true,
           }));
         });
+      }
+
+      /**
+       * Capture picture
+       *
+       * @private
+       */
+      _capture() {
+        const element = this.shadowRoot.querySelector('skeleton-image-uploader');
+        element.capture();
       }
     }
 
