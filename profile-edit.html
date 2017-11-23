@@ -82,6 +82,10 @@
       paper-input {
         margin-bottom: 0.5rem;
       }
+
+      skeleton-image-uploader {
+        --progress-overlay-color: var(--paper-green-a400);
+      }
     </style>
     <firebase-auth
       signed-in="{{signedIn}}"
@@ -219,10 +223,10 @@
           let user = firebase.auth().currentUser;
           user.updateProfile({
             displayName: this._toTitleCase(this.profile.name),
-          }).then(function () {
+          }).then(() => {
             // Update successful.
             console.log('User updated');
-          }).catch(function (error) {
+          }).catch((error) => {
             // An error happened.
             console.error('Error updating Auth: ', error);
             this.dispatchEvent(new CustomEvent('alert', {
