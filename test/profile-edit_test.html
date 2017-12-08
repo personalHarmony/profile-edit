@@ -8,19 +8,83 @@
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../iron-test-helpers/mock-interactions.js"></script>  
 
+  <link rel="import" href="./shared.html">  
   <link rel="import" href="../profile-edit.html">
+  <link rel="import" href="../../paper-button/paper-button.html">  
+  <link rel="import" href="./fake-user.html">
 </head>
 <body>
 
-<test-fixture id="BasicTestFixture">
+<test-fixture id="basicProfileEdit">
   <template>
-    <profile-edit></profile-edit>
+    <div>
+      <profile-edit></profile-edit>
+      <paper-button onclick="saveProfile();">Save</paper-button>
+    </div>
   </template>
 </test-fixture>
 
-<script>
-</script>
+  <script>
+
+    const oncePropChanged = (el, prop) => {
+      return new Promise((resolve, reject) => {
+        const dashedPropName = prop
+          .replace(/[A-Z]/g, (match) => `-${match[0].toLowerCase()}`)
+          .concat('-changed');
+        el.addEventListener(dashedPropName, listener);
+        /**
+         * listener
+         * @param {Object} event
+         */
+        function listener(event) {
+          el.removeEventListener(dashedPropName, listener);
+          resolve(event);
+        }
+      });
+    };
+
+    function saveProfile() {
+      const elem = this.document.querySelector('profile-edit');
+      elem.update();
+    }
+
+    suite('Default Behavior', () => {
+      let element;
+      setup(() => {
+        replace('firebase-auth').with('fake-user');
+  
+        stub('profile-edit', {
+          update: function() {
+            console.log('profile-edit.save called')
+          }
+        });
+        element = fixture('basicProfileEdit');
+      });
+      test('Should update name', (done) => {
+        setTimeout(() => {
+          const profileEdit = element.querySelector('profile-edit');
+          //oncePropChanged(profileEdit, 'ok').then(() => {
+            const inputName = profileEdit
+              .shadowRoot
+              .querySelector('#input-name');
+
+            inputName.value = 'Mario';
+
+            const saveButton = element.querySelector('paper-button');
+
+            MockInteractions.tap(saveButton);
+
+            expect(profileEdit.update.callCount).to.be.equal(1);
+
+            done();
+          //})
+          //.catch(done);
+        }, 5000)
+      })
+    });
+  </script>
 
 </body>
 </html>
