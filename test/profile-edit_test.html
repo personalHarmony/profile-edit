@@ -58,14 +58,17 @@
     };
 
     function saveProfile() {
-      console.log(this)
       const elem = this.document.querySelector('profile-edit');
       elem.update();
     }
 
     suite('Default behaviour', () => {
-      test('Should update name', (done) => {
+      test('Should update name and description', (done) => {
         const element = fixture('basicProfileEdit');
+        const randomString = Math.random().toString(16).slice(2);
+        const testName = randomString;
+        const testBio = 'testing ' + randomString;
+
         flush(() => {
           const skeletonAuth = element.querySelector('skeleton-auth');
           const profileEdit = element.querySelector('profile-edit');
@@ -112,18 +115,24 @@
             );
           })
           .then(() => {
-
             const inputName = profileEdit
               .shadowRoot
               .querySelector('#input-name');
 
-            inputName.value = 'John';
+            inputName.value = testName;
+
+            const description = profileEdit
+              .shadowRoot
+              .querySelector('#description');
+
+            description.value = testBio;
 
             const saveButton = element.querySelector('paper-button');
 
             MockInteractions.tap(saveButton);
 
-            expect(profileEdit.profile.name).to.be.equal('John');
+            expect(profileEdit.profile.name).to.be.equal(testName);
+            expect(profileEdit.profile.bio.original).to.be.equal(testBio);
             done()
           })
           .catch(done);
