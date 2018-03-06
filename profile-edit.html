@@ -281,7 +281,7 @@
         if (!user) return;
         let db = firebase.firestore();
         db.collection('user').doc(user.uid).onSnapshot((doc) => {
-          if (!doc.data()) return;
+          if (!doc.exists) return;
           this.profile = doc.data();
         });
 
