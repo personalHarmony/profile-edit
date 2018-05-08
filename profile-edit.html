@@ -188,7 +188,7 @@
        */
       ready() {
         super.ready();
-        window.addEventListener('completed',
+        this.addEventListener('completed',
           (downloadURL) => this._updatePhotoAuth(downloadURL));
       }
 
