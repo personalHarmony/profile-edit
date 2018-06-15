@@ -7,17 +7,20 @@
 
   <title>profile-edit demo</title>
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-
-  <link rel="import" href="../../iron-demo-helpers/demo-pages-shared-styles.html">
-  <link rel="import" href="../../iron-demo-helpers/demo-snippet.html">
-  <link rel="import" href="../../polymer/lib/elements/dom-bind.html">
-  <link rel="import" href="../../polymer/lib/elements/dom-if.html">
-  <link rel="import" href="../../polymerfire/polymerfire.html">
-  <link rel="import" href="../../iron-flex-layout/iron-flex-layout.html">
-  <link rel="import" href="../../skeleton-auth/skeleton-auth.html">
-  <link rel="import" href="../../paper-button/paper-button.html">
-  <link rel="import" href="../profile-edit.html">
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../node_modules/firebase/firebase.js"></script>
+  <script src="../node_modules/@fabricelements/firebase-config/index.js"></script>
+  <script type="module">
+    import '@polymer/iron-demo-helpers/demo-pages-shared-styles.js';
+    import '@polymer/iron-demo-helpers/demo-snippet.js';
+    import '@polymer/polymer/lib/elements/dom-bind.js';
+    import '@polymer/polymer/lib/elements/dom-if.js';
+    import '@polymer/iron-flex-layout/iron-flex-layout.js';
+    import '@polymer/paper-button/paper-button.js';
+    import '@fabricelements/skeleton-auth/skeleton-auth.js';
+  </script>
+  <script type="module" src="../profile-edit.js"></script>
 
   <custom-style>
     <style is="custom-style" include="demo-pages-shared-styles">
@@ -41,24 +44,25 @@
 </head>
 
 <body>
-<firebase-app project-id="fabricelements"
-              auth-domain="fabricelements.firebaseapp.com"
-              database-url="https://fabricelements.firebaseio.com"
-              api-key="AIzaSyCJRNdR0eodnswyi8MHCtF1YOjY235mhM8"
-              storage-bucket="fabricelements.appspot.com"
-              messaging-sender-id="908593247251"></firebase-app>
-<dom-bind>
-  <template>
-    <firebase-auth signed-in="{{signedIn}}" user="{{user}}"></firebase-auth>
-    <dom-if if="[[!signedIn]]">
+  <div class="vertical-section-container centered">
+    <h3>Basic profile-edit demo</h3>
+    <demo-snippet>
       <template>
-        <skeleton-auth google></skeleton-auth>
+        <dom-bind>
+          <template>
+            <div hidden="[[signedIn]]">
+              <skeleton-auth google
+                             signed-in="{{signedIn}}"
+                             user="{{user}}"></skeleton-auth>
+            </div>
+            <profile-edit ready-to-save="{{readyToSave}}"></profile-edit>
+            <paper-button onclick="saveProfile();" disabled$="[[!readyToSave]]">Save</paper-button>
+          </template>
+        </dom-bind>
       </template>
-    </dom-if>
-    <profile-edit ok="{{ok}}"></profile-edit>
-    <paper-button onclick="saveProfile();" disabled$="[[!ok]]">Save</paper-button>
-  </template>
-</dom-bind>
+    </demo-snippet>
+  </div>
+
 <script>
   /* eslint-disable no-unused-vars */
 
@@ -67,11 +71,9 @@
    *
    */
   function saveProfile() {
-    const element = this.document.querySelector('profile-edit');
+    const element = document.querySelector('profile-edit');
     element.update();
   }
-
 </script>
 </body>
-
 </html>

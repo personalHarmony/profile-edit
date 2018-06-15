@@ -6,139 +6,133 @@
 
   <title>profile-edit test</title>
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <script src="../../web-component-tester/browser.js"></script>
-  <script src="../../iron-test-helpers/mock-interactions.js"></script>  
+  <script src="../node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script>
+  <script src="../node_modules/wct-browser-legacy/browser.js"></script>
+  <script src="../node_modules/firebase/firebase.js"></script>
+  <script src="../node_modules/@fabricelements/firebase-config/index.js"></script>
 
-  <link rel="import" href="../../skeleton-auth/skeleton-auth.html">  
-  <link rel="import" href="../profile-edit.html">
-  <link rel="import" href="../../paper-button/paper-button.html">  
-  <link rel="import" href="./fake-user.html">
+  <script type="module">
+    import '@polymer/iron-test-helpers/mock-interactions.js';
+    import '@polymer/paper-button/paper-button.js';
+    import '@fabricelements/skeleton-auth/skeleton-auth.js';
+    import '../profile-edit.js';
+  </script>
 </head>
 <body>
   <test-fixture id="basicProfileEdit">
     <template>
         <div>
-          <firebase-app auth-domain="ph-staging-c3f40.firebaseapp.com"
-            database-url="https://ph-staging-c3f40.firebaseio.com"
-            api-key="AIzaSyAWZ2ax6AK7BRty2CVHTME6oNShBJaDkPI"
-            storage-bucket="ph-staging-c3f40.appspot.com"
-            project-id="ph-staging-c3f40">
-          </firebase-app>
-          <firebase-auth signed-in="{{signedIn}}" user="{{user}}"></firebase-auth>
-          <dom-if if="[[!signedIn]]">
-            <template>
-              <skeleton-auth email></skeleton-auth>
-            </template>
-          </dom-if>
+          <skeleton-auth email
+                         signed-in="{{signedIn}}"
+                         user="{{user}}"></skeleton-auth>
           <profile-edit></profile-edit>
           <paper-button onclick="saveProfile();">Save</paper-button>
         </div>
       </template>
   </test-fixture>
 
-  <script>
-    const oncePropChanged = (el, prop) => {
-      return new Promise((resolve, reject) => {
-        const dashedPropName = prop
-          .replace(/[A-Z]/g, (match) => `-${match[0].toLowerCase()}`)
-          .concat('-changed');
+<script>
+  const oncePropChanged = (el, prop) => {
+    return new Promise((resolve, reject) => {
+      const dashedPropName = prop
+        .replace(/[A-Z]/g, (match) => `-${match[0].toLowerCase()}`)
+        .concat('-changed');
 
-        el.addEventListener(dashedPropName, listener);
+      el.addEventListener(dashedPropName, listener);
 
-        /**
-        * listener
-        * @param {Object} event
-        */
-        function listener(event) {
-          el.removeEventListener(dashedPropName, listener);
-          resolve(event);
-        }
-      });
-    };
+      /**
+       * listener
+       * @param {Object} event
+       */
+      function listener(event) {
+        el.removeEventListener(dashedPropName, listener);
+        resolve(event);
+      }
+    });
+  };
 
-    function saveProfile() {
-      const elem = this.document.querySelector('profile-edit');
-      elem.update();
-    }
+  function saveProfile() {
+    const elem = this.document.querySelector('profile-edit');
+    elem.update();
+  }
 
-    suite('Default behaviour', () => {
-      test('Should update name and description', (done) => {
-        const element = fixture('basicProfileEdit');
-        const randomString = Math.random().toString(16).slice(2);
-        const testName = randomString;
-        const testBio = 'testing ' + randomString;
+  suite('Default behaviour', () => {
+    test('Should update name and description', (done) => {
+      const element = fixture('basicProfileEdit');
+      const randomString = Math.random().toString(16).slice(2);
+      const testName = randomString;
+      const testBio = 'testing ' + randomString;
 
-        flush(() => {
-          const skeletonAuth = element.querySelector('skeleton-auth');
-          const profileEdit = element.querySelector('profile-edit');
+      flush(() => {
+        const skeletonAuth = element.querySelector('skeleton-auth');
+        const profileEdit = element.querySelector('profile-edit');
 
-          // Select the email button
-          const emailButton = skeletonAuth.shadowRoot.querySelector('.email');
+        // Select the email button
+        const emailButton = skeletonAuth.shadowRoot.querySelector('.email');
+        
+        // Select the email/password auth method
+        MockInteractions.tap(emailButton);
+        
+        // Set default value on the email input
+        const emailInput = skeletonAuth
+        .shadowRoot
+        .querySelector('#login-input-mail');
+        emailInput.value = 'fabricelements@mailinator.com';
+        
+        // Select the sign in email button
+        const emailSignin = skeletonAuth
+        .shadowRoot
+        .querySelector('[name="email-login"] .action');
+        
+        // Click to sign in
+        MockInteractions.tap(emailSignin);
+        
+        // Wait for Firebase API response
+        oncePropChanged(skeletonAuth, 'availableProviders').then(() => {
+          // Set default value on the password input
+          const passInput = skeletonAuth
+          .shadowRoot
+          .querySelector('#login-input-pass');
+          passInput.value = 'fabricelements';
 
-          // Select the email/password auth method
-          MockInteractions.tap(emailButton);
-
-          // Set default value on the email input
-          const emailInput = skeletonAuth
+          // Select the sign in password button
+          const passSignin = skeletonAuth
             .shadowRoot
-            .querySelector('#login-input-mail');
-          emailInput.value = 'fabricelements@mailinator.com';
-
-          // Select the sign in email button
-          const emailSignin = skeletonAuth
-            .shadowRoot
-            .querySelector('[name="email-login"] .email');
+            .querySelector('[name="email-providers"] .action');
 
           // Click to sign in
-          MockInteractions.tap(emailSignin);
+          MockInteractions.tap(passSignin);
 
-          // Wait for Firebase API response
-          oncePropChanged(skeletonAuth, 'availableProviders').then(() => {
-            // Set default value on the password input
-            const passInput = skeletonAuth
-              .shadowRoot
-              .querySelector('#login-input-pass');
-            passInput.value = 'fabricelements';
-
-            // Select the sign in password button
-            const passSignin = skeletonAuth
-              .shadowRoot
-              .querySelector('[name="email-providers"] .email');
-
-            // Click to sign in
-            MockInteractions.tap(passSignin);
-
-            return oncePropChanged(
-              profileEdit,
-              'ok'
-            );
-          })
-          .then(() => {
-            const inputName = profileEdit
-              .shadowRoot
-              .querySelector('#input-name');
-
-            inputName.value = testName;
-
-            const description = profileEdit
-              .shadowRoot
-              .querySelector('#description');
-
-            description.value = testBio;
-
-            const saveButton = element.querySelector('paper-button');
-
-            MockInteractions.tap(saveButton);
-
-            expect(profileEdit.profile.name).to.be.equal(testName);
-            expect(profileEdit.profile.bio.original).to.be.equal(testBio);
-            done()
-          })
-          .catch(done);
+          return oncePropChanged(
+            profileEdit,
+            'signedIn'
+          );
         })
+        .then(() => {
+          const inputName = profileEdit
+            .shadowRoot
+            .querySelector('#input-name');
+
+          inputName.value = testName;
+
+          const description = profileEdit
+            .shadowRoot
+            .querySelector('#description');
+
+          description.value = testBio;
+
+          const saveButton = element.querySelector('paper-button');
+
+          MockInteractions.tap(saveButton);
+
+          expect(profileEdit.profile.name).to.be.equal(testName);
+          expect(profileEdit.profile.bio.original).to.be.equal(testBio);
+          done()
+        })
+        .catch(done);
       })
     })
-  </script>
+  })
+</script>
 </body>
 </html>
