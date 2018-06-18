@@ -21,6 +21,7 @@
   "dependencies": {
     "@fabricelements/skeleton-auth": "github:FabricElements/skeleton-auth",
     "@fabricelements/skeleton-image-uploader": "github:FabricElements/skeleton-image-uploader",
+    "@fabricelements/skin-styles": "github:FabricElements/skin-styles",
     "@polymer/iron-flex-layout": "^3.0.0-pre.18",
     "@polymer/iron-test-helpers": "^3.0.0-pre.18",
     "@polymer/paper-fab": "^3.0.0-pre.18",

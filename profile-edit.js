@@ -5,6 +5,8 @@ import '@polymer/iron-flex-layout/iron-flex-layout.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-fab/paper-fab.js';
 import '@polymer/iron-icons/image-icons.js';
+import '@fabricelements/skin-styles/classes/buttons.js';
+import '@fabricelements/skin-styles/classes/typography.js';
 import '@fabricelements/skeleton-image-uploader/skeleton-image-uploader.js';
 /**
  * `profile-edit`
@@ -20,7 +22,7 @@ class ProfileEdit extends PolymerElement {
    */
   static get template() {
     return html`
-    <style is="custom-style">
+    <style is="custom-style" include="skin-buttons skin-typography">
       :host {
         display: block;
         @apply --layout-flex-none;
