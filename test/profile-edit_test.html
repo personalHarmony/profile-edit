@@ -32,6 +32,7 @@
   </test-fixture>
 
 <script>
+  /* eslint-disable no-unused-vars */
   const oncePropChanged = (el, prop) => {
     return new Promise((resolve, reject) => {
       const dashedPropName = prop
@@ -51,8 +52,11 @@
     });
   };
 
+  /**
+   * save profile
+   */
   function saveProfile() {
-    const elem = this.document.querySelector('profile-edit');
+    const elem = document.querySelector('profile-edit');
     elem.update();
   }
 
@@ -69,24 +73,24 @@
 
         // Select the email button
         const emailButton = skeletonAuth.shadowRoot.querySelector('.email');
-        
+
         // Select the email/password auth method
         MockInteractions.tap(emailButton);
-        
+
         // Set default value on the email input
         const emailInput = skeletonAuth
         .shadowRoot
         .querySelector('#login-input-mail');
         emailInput.value = 'fabricelements@mailinator.com';
-        
+
         // Select the sign in email button
         const emailSignin = skeletonAuth
         .shadowRoot
         .querySelector('[name="email-login"] .action');
-        
+
         // Click to sign in
         MockInteractions.tap(emailSignin);
-        
+
         // Wait for Firebase API response
         oncePropChanged(skeletonAuth, 'availableProviders').then(() => {
           // Set default value on the password input
@@ -127,12 +131,12 @@
 
           expect(profileEdit.profile.name).to.be.equal(testName);
           expect(profileEdit.profile.bio.original).to.be.equal(testBio);
-          done()
+          done();
         })
         .catch(done);
-      })
-    })
-  })
+      });
+    });
+  });
 </script>
 </body>
 </html>
